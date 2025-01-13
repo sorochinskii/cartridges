@@ -1,0 +1,31 @@
+[project]
+name = "cartridges-del"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "sorochinskii",email = "pika8oo@yandex.ru"}
+]
+license = {text = "The Unlicense"}
+readme = "README.md"
+requires-python = ">=3.11, <3.12"
+dependencies = [
+    "sqlalchemy (>=2.0.0, <3.0.0)",
+    "psycopg2-binary",
+    "alembic",
+    "fastapi",
+    "httpx",
+    "loguru",
+    "pydantic-settings",
+    "python-dotenv",
+    "uvicorn",
+    "pytest-asyncio"
+]
+
+[tool.poetry]
+packages = [
+    { include = "source" }
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
