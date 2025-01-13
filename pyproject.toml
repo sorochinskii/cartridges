@@ -1,5 +1,5 @@
 [project]
-name = "cartridges-del"
+name = "cartridges"
 version = "0.1.0"
 description = ""
 authors = [
@@ -18,7 +18,8 @@ dependencies = [
     "pydantic-settings",
     "python-dotenv",
     "uvicorn",
-    "pytest-asyncio"
+    "pytest-asyncio==0.23.8",
+    "pytest==8.2.2"
 ]
 
 [tool.poetry]
