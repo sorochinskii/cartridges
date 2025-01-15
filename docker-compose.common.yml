@@ -1,0 +1,48 @@
+services:
+
+  db:
+    image: postgres:15.6-alpine3.19
+    restart: always
+    container_name: cartridges-db
+    healthcheck:
+      test: "pg_isready -h db"
+      interval: 3s
+      timeout: 5s
+      retries: 5
+    env_file:
+        - ./.env
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:5432
+
+  db-postgres-setup:
+    # fix permissions for postgres service
+    container_name: db-postgres-setup
+    image: postgres:15.6-alpine3.19
+    user: root
+    volumes:
+        - ./database:/var/lib/postgresql/data
+    entrypoint: [ "bash", "-c", "chmod 750 -R /var/lib/postgresql/data"] 
+    depends_on:
+        - db
+
+  web:
+    container_name: cartridges
+    restart: always
+    ports:
+      - 8448:8000
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+        - ./.env
+    command: bash -c "
+      cd /code
+      && alembic upgrade head
+      && cd source
+      && uvicorn main:app --host 0.0.0.0 --port 8000"

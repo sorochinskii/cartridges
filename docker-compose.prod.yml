@@ -1,0 +1,29 @@
+services:
+
+  db:
+    extends:
+      file: docker-compose.common.yml
+      service: db
+    networks:
+    - network1
+
+  db-postgres-setup:
+    extends:
+      file: docker-compose.common.yml
+      service: db-postgres-setup
+
+  web:
+    extends:
+      file: docker-compose.common.yml
+      service: web
+    image: sorochinskii/${PROJECT_NAME}:latest
+    volumes:
+      - ./.env:/code/.env
+    networks:
+    - network1
+
+
+networks:
+  network1:
+    name: servicesnetwork
+    external: true

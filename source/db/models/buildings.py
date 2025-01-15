@@ -4,9 +4,9 @@ from db.models.base import BaseCommonID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from db.models.rooms import Rooms
+    from db.models.rooms import Room
 
 
-class Buildings(BaseCommonID):
+class Building(BaseCommonID):
     name: Mapped[str] = mapped_column(nullable=False)
-    rooms: Mapped[list['Rooms']] = relationship(back_populates='building')
+    rooms: Mapped[list['Room']] = relationship(back_populates='building')
