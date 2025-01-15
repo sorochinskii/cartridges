@@ -13,6 +13,8 @@ WORKDIR /$CODE_DIR
 
 COPY poetry.lock pyproject.toml ./
 COPY ./$SOURCE_DIR/ ./$SOURCE_DIR/
+COPY migrations migrations
+COPY alembic.ini alembic.ini
 
 RUN pip install poetry==2.0.0
 

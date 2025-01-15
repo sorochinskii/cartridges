@@ -13,16 +13,16 @@ jobs:
     - 
       uses: actions/checkout@v4
     - 
-        name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-            python-version: '3.11'
+      name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.11'
     -
       name: Install dump-env and create .env
       env:
         VARS_PROJECT_NAME: ${{ vars.PROJECT_NAME }}
         VARS_HTTP_SECURE: ${{ vars.HTTP_SECURE}}
-        VARS_HTTP_PORT: ${{ vars.HTTP_PORT }}
+        SECRET_HTTP_PORT: ${{ secrets.HTTP_PORT }}
         VARS_V1: ${{ vars.V1 }}
         VARS_HOST: ${{ vars.HOST }}
         VARS_LOG_DIR: ${{ vars.LOG_DIR }}
@@ -56,6 +56,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      # -
+      #   uses: csexton/debugger-action@master
+      #   name: Setup Debug Session
       -
         name: Check out the repo
         uses: actions/checkout@v4
@@ -82,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: build_and_push_to_docker_hub
+    # needs: build_and_push_to_docker_hub
 
     steps:
       -
@@ -109,7 +112,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install dump-env==1.5.0
-          dump-env --template=.env.template --prefix='VARS_' \
+          dump-env --template=.template.env --prefix='VARS_' \
           --prefix='SECRET_' > .env
       -
         name: Copy file via ssh
