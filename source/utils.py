@@ -62,7 +62,7 @@ def split_and_concatenate(string: str) -> str:
         elif letter.isupper() and prev.isupper():
             temp += letter
         prev = letter
-    result = "_".join(words).lower()[::-1]
+    result = '_'.join(words).lower()[::-1]
     return result
 
 

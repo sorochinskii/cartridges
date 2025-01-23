@@ -11,7 +11,7 @@ url = url_builder.url()
 tags_metadata = [
     {
         'name': 'v1',
-        "description": "API version 1",
+        'description': 'API version 1',
         'externalDocs': {
             'description': 'sub-docs',
             'url': url
