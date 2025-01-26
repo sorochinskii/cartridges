@@ -1,3 +1,4 @@
+from api.v1.endpoints.buildings import buildings_router
 from api.v1.endpoints.rooms import rooms_router
 from config import settings
 from fastapi import FastAPI
@@ -22,3 +23,4 @@ tags_metadata = [
 app = FastAPI(openapi_tags=tags_metadata)
 
 app.include_router(rooms_router)
+app.include_router(buildings_router)

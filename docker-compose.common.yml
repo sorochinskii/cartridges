@@ -18,7 +18,7 @@ services:
     volumes:
       - ./database:/var/lib/postgresql/data
     ports:
-      - ${DB_PORT}:5432
+      - ${DB_HOST_PORT}:${DB_PORT}
 
   db-postgres-setup:
     # fix permissions for postgres service

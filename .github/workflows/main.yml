@@ -23,8 +23,8 @@ jobs:
         VARS_ENVIRONMENT: ${{ vars.ENVIRONMENT }}
         VARS_PROJECT_NAME: ${{ vars.PROJECT_NAME }}
         VARS_LOG_DIR: ${{ vars.LOG_DIR }}
-        VARS_HTTP_SECURE: ${{ vars.HTTP_SECURE}}
-        SECRET_HTTP_PORT: ${{ secrets.HTTP_PORT }}
+        VARS_HTTP_SECURE: ${{ vars.HTTP_SECURE }}
+        SECRET_HTTP_PORT: ${{ vars.HTTP_PORT }}
         VARS_V1: ${{ vars.V1 }}
         VARS_HOST: ${{ vars.HOST }}
       run: |
@@ -54,7 +54,7 @@ jobs:
     name: Build and push Docker image to Docker Hub
     environment: prod
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     steps:
       # -
       #   uses: csexton/debugger-action@master
@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     if: ${{ github.ref == 'refs/heads/main' }}
-    # needs: build_and_push_to_docker_hub
+    needs: build_and_push_to_docker_hub
 
     steps:
       -
@@ -107,6 +107,7 @@ jobs:
           VARS_ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           SECRET_DB_HOST: ${{ secrets.DB_HOST }}
           SECRET_DB_PORT: ${{ secrets.DB_PORT }}
+          SECRET_DB_HOST_PORT: ${{ secrets.DB_HOST_PORT }}
           SECRET_DB_PASS: ${{ secrets.DB_PASS }}
           SECRET_DB_USER: ${{ secrets.DB_USER }}
           SECRET_DB_NAME: ${{ secrets.DB_NAME }}
@@ -142,7 +143,4 @@ jobs:
           script: |
             cd ~/code
             docker compose down
-            # docker rmi sorochinskii/cartridges:latest -f || true
-            # docker builder prune -a -f || true
-            # docker compose build --no-cache
             docker compose up  --force-recreate -d

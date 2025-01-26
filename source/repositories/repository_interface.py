@@ -24,5 +24,5 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def all(self, **kwargs):
+    async def get_all(self, **kwargs):
         raise NotImplementedError
