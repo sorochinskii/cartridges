@@ -32,7 +32,7 @@ SMTP_ERROR_CODES = {
 }
 
 
-class SmtpErrorHandler:
+class SMTPExceptionsHandler:
 
     def __enter__(self):
         return self

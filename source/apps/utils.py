@@ -22,12 +22,13 @@ class EmailSender:
 
     def send(self, message: str = ''):
         SSL_context = ssl.create_default_context()
-        with smtplib.SMTP_SSL(self.smtp_server, self.port, context=SSL_context) as server:
+        with smtplib.SMTP_SSL(
+                self.smtp_server, self.port, context=SSL_context) as server:
             server.login(self.sender, self.sender_password)
             server.sendmail(self.sender, self.recepient, message)
 
 
-class RenderMessage:
+class RenderEmailMessage:
     def __init__(self,
                  templates_dir: str,
                  template: str,
@@ -41,9 +42,13 @@ class RenderMessage:
 
     def message(self, subject: str = '', *args, **kwargs):
         self._kwargs = kwargs
+        from_addr = self._kwargs.get('sender')
+        to_addr = self._kwargs.get('recepient')
         rendered_page = self.template.render(**kwargs)
         message = MIMEMultipart()
-        message['subject'] = subject
+        message['From'] = from_addr
+        message['To'] = to_addr
+        message['Subject'] = subject
         message.attach(MIMEText(rendered_page, "html"))
         return message.as_string()
 

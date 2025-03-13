@@ -9,7 +9,7 @@ buildings_router = APIRouter(prefix='/buildings', tags=['buildings'])
 
 @buildings_router.get('', response_model=list[BuildingIDBaseSchema])
 async def get_buildings(repository=Depends(building_repository)):
-    buildings = await repository.all()
+    buildings = await repository.get_all()
     return buildings
 
 

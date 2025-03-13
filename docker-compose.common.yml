@@ -16,7 +16,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_DB: ${DB_NAME}
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - ../cartridges-database:/var/lib/postgresql/data
     ports:
       - ${DB_HOST_PORT}:${DB_PORT}
 

@@ -2,7 +2,7 @@ from apps.users import get_user_manager
 from fastapi import APIRouter, Body, Depends, Request, exceptions, status
 from fastapi_users import BaseUserManager, models, schemas
 from fastapi_users.router.common import ErrorCode, ErrorModel
-from http_exceptions import HttpExceptionsHandler
+from http_exceptions_handler import HttpExceptionsHandler
 from pydantic import EmailStr
 from schemas.users_base import UserBaseSchema
 

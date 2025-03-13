@@ -1,7 +1,10 @@
 from api.v1.endpoints.buildings import buildings_router
+from api.v1.endpoints.cartridges import cartridges_router
+from api.v1.endpoints.devices import devices_router
 from api.v1.endpoints.rooms import rooms_router
 from api.v1.endpoints.users import users_router
 from api.v1.endpoints.users_verify import verify_router
+from api.v1.endpoints.vendors import vendors_router
 from config import settings
 from fastapi import FastAPI
 from utils import URLBuilder
@@ -28,3 +31,6 @@ app.include_router(rooms_router)
 app.include_router(buildings_router)
 app.include_router(users_router)
 app.include_router(verify_router)
+app.include_router(vendors_router)
+app.include_router(devices_router)
+app.include_router(cartridges_router)

@@ -33,13 +33,13 @@ jobs:
         dump-env --template=.template.env --prefix='VARS_' \
         --prefix='SECRET_' > .env
     - 
-        name: Install and configure Poetry
-        uses: snok/install-poetry@v1
-        with:
-            version: 2.0.0
-            virtualenvs-create: false
-            virtualenvs-in-project: false
-            installer-parallel: true
+      name: Install and configure Poetry
+      uses: snok/install-poetry@v1
+      with:
+          version: 2.0.0
+          virtualenvs-create: false
+          virtualenvs-in-project: false
+          installer-parallel: true
     -
       name: Install dependencies
       run: poetry install --no-interaction
@@ -59,26 +59,26 @@ jobs:
       # -
       #   uses: csexton/debugger-action@master
       #   name: Setup Debug Session
-      -
-        name: Check out the repo
-        uses: actions/checkout@v4
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      -
-        name: Login to Docker
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Push to Docker Hub
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: ./dockerfiles/${{ vars.PROJECT_NAME }}/Dockerfile
-          push: true
-          tags: sorochinskii/${{ vars.PROJECT_NAME }}:latest
+    -
+      name: Check out the repo
+      uses: actions/checkout@v4
+    -
+      name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    -
+      name: Login to Docker
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    -
+      name: Push to Docker Hub
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: ./dockerfiles/${{ vars.PROJECT_NAME }}/Dockerfile
+        push: true
+        tags: sorochinskii/${{ vars.PROJECT_NAME }}:latest
 
   deploy:
     name: Deploy
@@ -88,59 +88,59 @@ jobs:
     needs: build_and_push_to_docker_hub
 
     steps:
-      -
-        uses: actions/checkout@v4
-      -
-        name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-            python-version: 3.11
-      -
-        name: Install dump-env and create .env
-        env:
-          VARS_PROJECT_NAME: ${{ vars.PROJECT_NAME }}
-          VARS_HTTP_SECURE: ${{ vars.HTTP_SECURE}}
-          SECRET_HTTP_PORT: ${{ secrets.HTTP_PORT }}
-          VARS_V1: ${{ vars.V1 }}
-          VARS_HOST: ${{ secrets.HOST }}
-          VARS_LOG_DIR: ${{ vars.LOG_DIR }}
-          VARS_ENVIRONMENT: ${{ vars.ENVIRONMENT }}
-          SECRET_DB_HOST: ${{ secrets.DB_HOST }}
-          SECRET_DB_PORT: ${{ secrets.DB_PORT }}
-          SECRET_DB_HOST_PORT: ${{ secrets.DB_HOST_PORT }}
-          SECRET_DB_PASS: ${{ secrets.DB_PASS }}
-          SECRET_DB_USER: ${{ secrets.DB_USER }}
-          SECRET_DB_NAME: ${{ secrets.DB_NAME }}
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          pip install dump-env==1.5.0
-          dump-env --template=.template.env --prefix='VARS_' \
-          --prefix='SECRET_' > .env
-      -
-        name: Copy file via ssh
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "
-            docker-compose.yml,
-            docker-compose.common.yml,
-            docker-compose.prod.yml,
-            .env"
-          target: code
-      -
-        name: Executing docker compose and viola
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          script: |
-            cd ~/code
-            docker compose down
-            docker compose up  --force-recreate -d
+    -
+      uses: actions/checkout@v4
+    -
+      name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: 3.11
+    -
+      name: Install dump-env and create .env
+      env:
+        VARS_PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+        VARS_HTTP_SECURE: ${{ vars.HTTP_SECURE}}
+        SECRET_HTTP_PORT: ${{ secrets.HTTP_PORT }}
+        VARS_V1: ${{ vars.V1 }}
+        VARS_HOST: ${{ secrets.HOST }}
+        VARS_LOG_DIR: ${{ vars.LOG_DIR }}
+        VARS_ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        SECRET_DB_HOST: ${{ secrets.DB_HOST }}
+        SECRET_DB_PORT: ${{ secrets.DB_PORT }}
+        SECRET_DB_HOST_PORT: ${{ secrets.DB_HOST_PORT }}
+        SECRET_DB_PASS: ${{ secrets.DB_PASS }}
+        SECRET_DB_USER: ${{ secrets.DB_USER }}
+        SECRET_DB_NAME: ${{ secrets.DB_NAME }}
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install dump-env==1.5.0
+        dump-env --template=.template.env --prefix='VARS_' \
+        --prefix='SECRET_' > .env
+    -
+      name: Copy file via ssh
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        source: "
+          docker-compose.yml,
+          docker-compose.common.yml,
+          docker-compose.prod.yml,
+          .env"
+        target: code
+    -
+      name: Executing docker compose and viola
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd ~/code
+          docker compose down
+          docker compose up  --force-recreate -d

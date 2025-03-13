@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from repositories.repository_interface import AbstractRepository
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from types_custom import CreateSchemaType, UpdateSchemaType
 
 
 class RepositorySqla(AbstractRepository):
@@ -36,8 +35,9 @@ class RepositorySqla(AbstractRepository):
     async def delete(self, **filters) -> dict:
         async with self._session as session:
             instance = await self.get_single(**filters)
-            await session.delete(instance)
-            await session.commit()
+            if instance:
+                await session.delete(instance)
+                await session.commit()
             return filters
 
     async def get_single(self, **filters) -> Base | None:

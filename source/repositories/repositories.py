@@ -1,7 +1,13 @@
 from db.models.buildings import Building
+from db.models.cartridges import Cartridge
+from db.models.devices import Device
 from db.models.rooms import Room
+from db.models.vendors import Vendor
 from dependencies.dependencies import get_db_repository
 from repositories.repository_sqla import RepositorySqla
 
 room_repository = get_db_repository(Room, RepositorySqla)
 building_repository = get_db_repository(Building, RepositorySqla)
+vendor_repository = get_db_repository(Vendor, RepositorySqla)
+device_repository = get_db_repository(Device, RepositorySqla)
+cartridge_repository = get_db_repository(Cartridge, RepositorySqla)

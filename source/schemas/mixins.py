@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, create_model
-from types_custom import IDType
 
 
 class OptionalFieldsMixin:

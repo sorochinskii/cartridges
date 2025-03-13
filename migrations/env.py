@@ -10,9 +10,11 @@ from alembic import context
 from config import settings
 from db.models.base import BaseCommon
 from db.models.buildings import Building
+from db.models.cartridges import Cartridge
 from db.models.employees import Employee
 from db.models.rooms import Room
 from db.models.users import User
+from db.models.vendors import Vendor
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config

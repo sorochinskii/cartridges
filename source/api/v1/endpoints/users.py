@@ -1,7 +1,7 @@
 
 from apps.users import auth_backend, fastapi_users
 from fastapi import APIRouter
-from schemas.users_base import UserBaseSchema
+from schemas.users_base import UserBaseCreate, UserBaseSchema
 
 users_router = APIRouter(prefix='/users')
 
@@ -14,7 +14,7 @@ users_router.include_router(
 users_router.include_router(
     fastapi_users.get_register_router(
         user_schema=UserBaseSchema,
-        user_create_schema=UserBaseSchema),
+        user_create_schema=UserBaseCreate),
     prefix='/auth',
     tags=['auth'],
 )

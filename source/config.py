@@ -39,6 +39,12 @@ class ProdSettings(BasicSettings):
 
     JWT_SECRET: str = Field(default='JWT_SECRET')
 
+    TOKEN_LIFETIME: int = Field(default=600)
+
+    TEMPLATES_DIR: str = Field(default='source/templates')
+    TEMPLATE_VERIFICATION: str = Field(default='email_verification.html')
+    TEMPLATE_REGISTRATION: str = Field(default='email_registration.html')
+
     @model_validator(mode='before')
     def get_database_url(cls, values):
 

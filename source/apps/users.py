@@ -1,7 +1,7 @@
 from smtplib import SMTPRecipientsRefused
 
 import jwt
-from apps.utils import EmailSender, RenderMessage, URLBuilder
+from apps.utils import EmailSender, RenderEmailMessage, URLBuilder
 from config import settings
 from cryptography.fernet import Fernet
 from db.db import get_async_session
@@ -12,6 +12,7 @@ from fastapi_users import (
     FastAPIUsers,
     IntegerIDMixin,
     InvalidPasswordException,
+    UUIDIDMixin,
     exceptions,
     models,
 )
@@ -25,21 +26,21 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from http_exceptions import HTTPObjectNotExist
 from loguru import logger
 from schemas.users_base import UserBaseSchema
-from smtp_exception_handler import SmtpErrorHandler
+from smtp_exceptions_handler import SMTPExceptionsHandler
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
+class UserManager(UUIDIDMixin, BaseUserManager[User, int]):
     reset_password_token_secret = settings.JWT_SECRET
     verification_token_secret = settings.JWT_SECRET
 
     async def on_after_register(self, user: User,
                                 request: Request | None = None):
-        verification_message = RenderMessage(
+        verification_message = RenderEmailMessage(
             templates_dir='source/templates',
             template='email_registration.html')
         url_builder = URLBuilder(
-            settings.HTTP_PROTOCOL,
+            settings.HTTP_SECURE,
             settings.HOST,
             settings.HTTP_PORT,
             'http://localhost:'
@@ -47,15 +48,15 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         subject = 'Registration message'
         message = verification_message.message(
             subject=subject,
-            url=url_builder.url())
+            url=url_builder.url(),
+            sender=settings.SENDER_EMAIL,
+            recepient=user.email)
 
         email = EmailSender(smtp_server=settings.SMTP_SERVER,
                             smtp_port=settings.SMTP_PORT,
                             sender=settings.SENDER_EMAIL,
                             sender_password=settings.SENDER_PASSWORD,
                             recepient=user.email)
-        # with SmtpErrorHandler():
-        #     email.send(message=message)
         try:
             email.send(message)
         except SMTPRecipientsRefused as ex:
@@ -66,7 +67,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     ):
         if not token:
             raise HTTPObjectNotExist
-        verification_message = RenderMessage(
+        verification_message = RenderEmailMessage(
             templates_dir=settings.TEMPLATES_DIR,
             template=settings.TEMPLATE_VERIFICATION)
         subject = 'Password reset'
@@ -78,7 +79,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
                             sender=settings.SENDER_EMAIL,
                             sender_password=settings.SENDER_PASSWORD,
                             recepient=user.email)
-        with SmtpErrorHandler():
+        with SMTPExceptionsHandler():
             email.send(message=message)
 
     async def on_after_request_verify(
@@ -88,20 +89,22 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             raise HTTPObjectNotExist
         fernet = Fernet(settings.VERIFY_TOKEN_SECRET.encode())
         enc_token = fernet.encrypt(token.encode())
-        verification_message = RenderMessage(
+        verification_message = RenderEmailMessage(
             templates_dir=settings.TEMPLATES_DIR,
             template=settings.TEMPLATE_VERIFICATION)
         subject = 'Verification message'
         message = verification_message.message(
             subject=subject,
-            token=enc_token.decode())
+            token=enc_token.decode(),
+            sender=settings.SENDER_EMAIL,
+            recepient=user.email)
 
         email = EmailSender(smtp_server=settings.SMTP_SERVER,
                             smtp_port=settings.SMTP_PORT,
                             sender=settings.SENDER_EMAIL,
                             sender_password=settings.SENDER_PASSWORD,
                             recepient=user.email)
-        with SmtpErrorHandler():
+        with SMTPExceptionsHandler():
             email.send(message=message)
 
     async def validate_password(
