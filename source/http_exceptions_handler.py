@@ -1,7 +1,5 @@
-from fastapi import HTTPException, status
 from fastapi_users import exceptions as fast_users_exceptions
 from fastapi_users.exceptions import UserNotExists
-from fastapi_users.router.common import ErrorCode as FastUsersErrorCode
 from http_exceptions import (
     HTTPObjectNotExist,
     HTTPUniqueException,
