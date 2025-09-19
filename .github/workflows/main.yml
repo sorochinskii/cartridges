@@ -89,7 +89,6 @@ jobs:
 
     steps:
     -
-      name: Check out the repo
       uses: actions/checkout@v4
     -
       name: Set up Python
@@ -143,6 +142,5 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd ~/code
-          docker rmi sorochinskii/${{ vars.PROJECT_NAME }} -f
           docker compose down
-          docker compose up -d
+          docker compose up  --force-recreate -d

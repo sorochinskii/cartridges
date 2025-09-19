@@ -4,10 +4,11 @@ from typing import Annotated
 from sqlalchemy import func
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 from types_custom import IDType
-from utils.urls import split_and_concatenate
+from utils import split_and_concatenate
 
 
-class Base(DeclarativeBase): ...
+class Base(DeclarativeBase):
+    ...
 
 
 class TableNameMixin:
@@ -35,13 +36,13 @@ class BaseCommonID(BaseCommon, IDMixin):
 
 
 created_at = Annotated[
-    datetime, mapped_column(nullable=False, server_default=func.now())
+    datetime,
+    mapped_column(nullable=False, server_default=func.now())
 ]
 
 
 updated_at = Annotated[
     datetime,
-    mapped_column(
-        nullable=False, server_default=func.now(), onupdate=func.now()
-    ),
+    mapped_column(nullable=False, server_default=func.now(),
+                  onupdate=func.now())
 ]

@@ -26,31 +26,23 @@ services:
     image: postgres:15.6-alpine3.19
     user: root
     volumes:
-        - ../cartridges-database:/var/lib/postgresql/data
+        - ./database:/var/lib/postgresql/data
     entrypoint: [ "bash", "-c", "chmod 750 -R /var/lib/postgresql/data"] 
     depends_on:
         - db
 
-  redis:
-    image: redis:latest
-    container_name: cartridges-redis
-    volumes:
-      - ./redis/redis_data:/data
+  web:
+    container_name: cartridges
+    restart: always
+    ports:
+      - 8448:8000
+    depends_on:
+      db:
+        condition: service_healthy
     env_file:
-      - ./.env
-    environment:
-      - REDIS_USER=${REDIS_USER}
-      - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-    command: >
-      sh -c '
-      mkdir -p /etc/redis &&
-      echo "user ${REDIS_USER} on >${REDIS_USER_PASSWORD} ~* &* +@all" > /etc/redis/users.acl &&
-      chmod 644 /etc/redis/users.acl && 
-      redis-server --requirepass "somepass" --aclfile /etc/redis/users.acl --appendonly yes
-      '
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+        - ./.env
+    command: bash -c "
+      cd /code
+      && alembic upgrade head
+      && cd source
+      && uvicorn main:app --host 0.0.0.0 --port 8000"

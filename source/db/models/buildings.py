@@ -9,4 +9,4 @@ if TYPE_CHECKING:
 
 class Building(BaseCommonID):
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
-    rooms: Mapped[list["Room"]] = relationship(back_populates="building")
+    rooms: Mapped[list['Room']] = relationship(back_populates='building')

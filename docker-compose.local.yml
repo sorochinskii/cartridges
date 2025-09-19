@@ -10,21 +10,12 @@ services:
       file: docker-compose.common.yml
       service: db-postgres-setup
 
-  redis:
-    ports:
-      - ${REDIS_HOST_PORT}:${REDIS_PORT}
+  web:
     extends:
       file: docker-compose.common.yml
-      service: redis
-
-
-      
-  # web:
-  #   extends:
-  #     file: docker-compose.common.yml
-  #     service: web
-  #   build:
-  #     context: .
-  #     dockerfile: ./dockerfiles/cartridges/Dockerfile
-  #   volumes:
-  #     - ./.env:/code/.env
+      service: web
+    build:
+      context: .
+      dockerfile: ./dockerfiles/cartridges/Dockerfile
+    volumes:
+      - ./.env:/code/.env

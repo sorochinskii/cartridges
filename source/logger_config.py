@@ -1,44 +1,28 @@
-from typing import Any, Dict
+import sys
 
-from config import settings
+from config import ENVIRONMENT, settings
 from loguru import logger
 
+format = '{time:MMMM D, YYYY > HH:mm:ss} | {level} | {message} | {extra}'
+if ENVIRONMENT != 'prod':
+    DEBUG_SINK = f'{settings.LOG_DIR}/debug/' + '{time:YYYY_MM_DD}'
+    INFO_SINK = f'{settings.LOG_DIR}/info/' + '{time:YYYY_MM_DD}'
+    ERROR_SINK = f'{settings.LOG_DIR}/error/' + '{time:YYYY_MM_DD}'
+else:
+    DEBUG_SINK = INFO_SINK = ERROR_SINK = sys.stderr
 
-def configure_logging() -> None:
-    logger.remove()
 
-    log_format = "{time:MMMM D, YYYY > HH:mm:ss} | " + \
-                 "{level} | {message} | {extra}"
-    rotation_policy = "10 MB"
-    log_dir = settings.LOG_DIR
+logger.remove()
 
-    handlers_config: Dict[str, Dict[str, Any]] = {
-        "INFO": {
-            "sink": f"{log_dir}/info/{{time:YYYY_MM_DD}}.log",
-            "level": "INFO",
-            "format": log_format,
-            "rotation": rotation_policy,
-            "filter": lambda record: record["level"].name == "INFO"
-        },
-        "ERROR": {
-            "sink": f"{log_dir}/error/{{time:YYYY_MM_DD}}.log",
-            "level": "ERROR",
-            "format": log_format,
-            "rotation": rotation_policy,
-            "filter": lambda record: record["level"].name == "ERROR"
-        }
-    }
 
-    if settings.ENVIRONMENT != "prod":
-        handlers_config["DEBUG"] = {
-            "sink": f"{log_dir}/debug/{{time:YYYY_MM_DD}}.log",
-            "level": "DEBUG",
-            "format": log_format,
-            "rotation": rotation_policy,
-            "filter": lambda record: record["level"].name == "DEBUG"
-        }
+logger.add(DEBUG_SINK,
+           filter=lambda record: record['level'].name == 'DEBUG',
+           format=format)
 
-    for handler_config in handlers_config.values():
-        logger.add(**handler_config)
+logger.add(INFO_SINK,
+           filter=lambda record: record['level'].name == 'INFO',
+           format=format)
 
-configure_logging()
+logger.add(ERROR_SINK,
+           filter=lambda record: record['level'].name == 'ERROR',
+           format=format)

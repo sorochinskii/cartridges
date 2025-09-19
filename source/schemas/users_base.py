@@ -1,8 +1,4 @@
-from fastapi_users.schemas import (
-    BaseUser,
-    BaseUserUpdate,
-    CreateUpdateDictModel,
-)
+from fastapi_users.schemas import BaseUser, BaseUserUpdate, CreateUpdateDictModel
 from pydantic import EmailStr
 from types_custom import IDType
 
@@ -12,9 +8,10 @@ class UserBaseSchema(BaseUser):
     is_active: bool = False
 
 
-class UserUpdateBaseSchema(BaseUserUpdate): ...
+class UserUpdateBaseSchema(BaseUserUpdate):
+    ...
 
 
-class UserBaseCreateSchema(CreateUpdateDictModel):
+class UserBaseCreate(CreateUpdateDictModel):
     email: EmailStr
     password: str
