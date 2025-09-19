@@ -22,6 +22,12 @@ services:
     networks:
     - network1
 
+  redis:
+    extends:
+      file: docker-compose.common.yml
+      service: redis
+    networks:
+    - network1
 
 networks:
   network1:

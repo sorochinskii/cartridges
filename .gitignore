@@ -175,3 +175,7 @@ cython_debug/
 database
 database/
 **/database
+
+./redisdata/
+redisdata/
+redis

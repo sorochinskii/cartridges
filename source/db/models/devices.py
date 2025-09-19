@@ -15,12 +15,12 @@ class Device(BaseCommonID):
     name: Mapped[str] = mapped_column(nullable=False)
     serial: Mapped[str] = mapped_column(nullable=False)
     room_id: Mapped[IDType | None] = mapped_column(
-        ForeignKey('room.id'))
-    room: Mapped['Room'] = relationship(back_populates='devices',
+        ForeignKey("room.id"))
+    room: Mapped["Room"] = relationship(back_populates="devices",
                                         foreign_keys=[room_id])
     vendor_id: Mapped[IDType | None] = mapped_column(
-        ForeignKey('vendor.id'))
-    vendor: Mapped['Vendor'] = relationship(
-        back_populates='devices',
+        ForeignKey("vendor.id"))
+    vendor: Mapped["Vendor"] = relationship(
+        back_populates="devices",
         foreign_keys=[vendor_id])
-    cartridges: Mapped['Cartridge'] = relationship(back_populates='device')
+    cartridges: Mapped["Cartridge"] = relationship(back_populates="device")

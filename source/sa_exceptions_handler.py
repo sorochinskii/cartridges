@@ -21,7 +21,7 @@ class ErrorHandler:
         if not ex_instance:
             return
         logger.error(ex_instance)
-        if hasattr(ex_instance, 'orig'):
+        if hasattr(ex_instance, "orig"):
             match ex_instance.orig.pgcode:
                 case errorcodes.UNIQUE_VIOLATION:
                     raise ItemNotUnique("Not unique")
